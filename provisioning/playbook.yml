@@ -1,0 +1,69 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: set timezone
+    command: ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+
+  - name: install packages
+    yum: name={{ item }} state=present
+    with_items:
+      - vim
+      - tcpdump
+      - iperf3
+
+  - name: NetworkManager stop & disable
+    service: name=NetworkManager state=stopped enabled=no
+
+  - name: copy ifcfg-eth1 config
+    copy: src=ifcfg-eth1.{{ inventory_hostname }} dest=/etc/sysconfig/network-scripts/ifcfg-eth1 owner=root group=root mode=0644
+
+- hosts: testServer1
+  become: yes
+  tasks:
+    - name: restart network.service
+      service: name=network state=restarted enabled=yes
+
+- hosts: testServer2
+  become: yes
+  tasks:
+    - name: restart network.service
+      service: name=network state=restarted enabled=yes
+
+- hosts: testClient1
+  become: yes
+  tasks:
+    - name: restart network.service
+      service: name=network state=restarted enabled=yes
+
+- hosts: testClient2
+  become: yes
+  tasks:
+    - name: restart network.service
+      service: name=network state=restarted enabled=yes
+
+- hosts: inetRouter
+  become: yes
+  tasks:
+  - name: copy ifcfg-eth2 config
+    copy: src=ifcfg-eth2.{{ inventory_hostname }} dest=/etc/sysconfig/network-scripts/ifcfg-eth2 owner=root group=root mode=0644
+
+  - name: copy ifcfg-bond0 config
+    copy: src=ifcfg-bond0.{{ inventory_hostname }} dest=/etc/sysconfig/network-scripts/ifcfg-bond0 owner=root group=root mode=0644
+    when: inventory_hostname == ("inetRouter") or ("centralRouter")
+
+  - name: restart router
+    reboot:
+
+- hosts: centralRouter
+  become: yes
+  tasks:
+  - name: copy ifcfg-eth2 config
+    copy: src=ifcfg-eth2.{{ inventory_hostname }} dest=/etc/sysconfig/network-scripts/ifcfg-eth2 owner=root group=root mode=0644
+
+  - name: copy ifcfg-bond0 config
+    copy: src=ifcfg-bond0.{{ inventory_hostname }} dest=/etc/sysconfig/network-scripts/ifcfg-bond0 owner=root group=root mode=0644
+    when: inventory_hostname == ("inetRouter") or ("centralRouter")
+
+  - name: restart router
+    reboot:

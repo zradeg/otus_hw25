@@ -1,0 +1,5 @@
+DEVICE=eth1
+ONBOOT=yes
+SLAVE=yes
+MASTER=bond0
+BOOTPROTO=none 
