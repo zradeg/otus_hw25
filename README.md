@@ -143,7 +143,7 @@ Slave queue ID: 0
 ERROR:  parameter mode=6 is not supported
 ```
 
-После устанения несовместимости и замены конфигов, при попытке переключиться на новую конфигурацию:
+После устранения несовместимости и замены конфигов, при попытке переключиться на новую конфигурацию:
 
 ```
 [root@centralRouter ~]# ifdown eth1
@@ -198,14 +198,15 @@ runner:
 [root@inetRouter ~]# iperf3 -c 192.168.255.11 -i 10 -b 2G -t 60
 ```
 
-![sc03_teaming_loadbalance.png](./sc03_teaming_loadbalance.png)
+![sc02_teaming_activebackup.png](./sc02_teaming_activebackup.png)
+
 
 
 В процессе переключения на режим loadbalance, обнаружил, что при настройке разных хостов в разные режимы, связность сохраняется и каждый хост работает в своем режиме (что, оглядываясь назад, в принципе кажется очень логичным).
 
 И еще одна проверка, теперь уже в режиме loadbalance
 
-![sc02_teaming_activebackup.png](./sc02_teaming_activebackup.png)
+![sc03_teaming_loadbalance.png](./sc03_teaming_loadbalance.png)
 
 И снова видно, что трафик распределяется по обоим портам.
 
